@@ -77,9 +77,3 @@ Comando para conocer que aplicación está usando el puerto 8080 Java
 
 Comando para detener el proceso del puerto 8080
 sudo kill -9 ####
-
-Para borrar la base de datos
-`drop database db_moto2;`
-
-Para crear la base de datos
-`create database db_moto2;`
