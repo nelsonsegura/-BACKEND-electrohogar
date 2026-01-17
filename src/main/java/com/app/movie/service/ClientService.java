@@ -6,8 +6,10 @@ package com.app.movie.service;
 
 import com.app.movie.dto.ReportClientDto;
 import com.app.movie.dto.ResponseDto;
+import com.app.movie.entities.Admin;
 import com.app.movie.entities.Client;
 
+import com.app.movie.repository.AdminRepository;
 import com.app.movie.repository.ClientRepository;
 
 
@@ -31,6 +33,10 @@ public class ClientService {
     private final String CLIENT_SUCCESS="el cliente  se registró correctamente";
     @Autowired
     ClientRepository repository;
+
+    @Autowired
+    AdminRepository adminRepository;
+
 
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -63,19 +69,33 @@ public class ClientService {
     public ResponseDto create(Client request) {
 
         ResponseDto response = new ResponseDto();
-        request.setPassword(encrypt(request.getPassword()));
-        List<Client> clients = repository.getByEmail(request.getEmail());
-        if(clients.size()>0){
-            response.status=false;
-            response.message=CLIENT_REGISTERED;
-        }else{
-            repository.save(request);
-            response.status=true;
-            response.message=CLIENT_SUCCESS;
-            response.id= request.getId();
+
+        // 🔴 VALIDACIÓN CRUZADA: ¿EXISTE COMO ADMIN?
+        Optional<Admin> adminOpt = adminRepository.findByEmail(request.getEmail());
+        if (adminOpt.isPresent()) {
+            response.status = false;
+            response.message = "Este correo ya está registrado como comerciante";
+            return response;
         }
+
+        // 🔐 CIFRAR CONTRASEÑA
+        request.setPassword(encrypt(request.getPassword()));
+
+        // 🔴 VALIDACIÓN NORMAL: CLIENTE
+        List<Client> clients = repository.getByEmail(request.getEmail());
+        if (!clients.isEmpty()) {
+            response.status = false;
+            response.message = CLIENT_REGISTERED;
+        } else {
+            repository.save(request);
+            response.status = true;
+            response.message = CLIENT_SUCCESS;
+            response.id = request.getId();
+        }
+
         return response;
     }
+
 
     public Client update(Client client) {
         Client clientToUpdate = new Client();

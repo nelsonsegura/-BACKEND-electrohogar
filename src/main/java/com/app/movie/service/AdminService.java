@@ -7,7 +7,9 @@ package com.app.movie.service;
 import com.app.movie.dto.ReportAdminDto;
 import com.app.movie.dto.ResponseDto;
 import com.app.movie.entities.Admin;
+import com.app.movie.entities.Client;
 import com.app.movie.repository.AdminRepository;
+import com.app.movie.repository.ClientRepository;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +28,10 @@ public class AdminService {
     private final String ADMIN_SUCCESS="el COMERCIANTE   se registró correctamente";
     @Autowired
     AdminRepository repository;
+
+    @Autowired
+    private ClientRepository clientRepository;
+
 
     @Value("${admin.secret.key}")
     private String adminSecretKey;
@@ -61,30 +67,44 @@ public class AdminService {
     public ResponseDto create(Admin request, String secretKey) {
 
         ResponseDto response = new ResponseDto();
-        // 🔐 VALIDAR CLAVE SECRETA
+
+        // 🔐 VALIDAR CLAVE SECRETA DE COMERCIANTE
         if (secretKey == null || !adminSecretKey.equals(secretKey)) {
             response.status = false;
             response.message = "Clave de comerciante inválida";
             return response;
         }
 
-        request.setSecretKey(null);   // ❌ No se guarda
-        request.setPassword(encrypt(request.getPassword()));  // 🔐 Se cifra
+        // 🔴 VALIDACIÓN CRUZADA: ¿EXISTE COMO CLIENTE?
+        List<Client> clients = clientRepository.getByEmail(request.getEmail());
+        if (!clients.isEmpty()) {
+            response.status = false;
+            response.message = "Este correo ya está registrado como cliente";
+            return response;
+        }
 
+
+        // 🔎 VALIDAR SI YA EXISTE COMO ADMIN
         Optional<Admin> adminOpt = repository.getByEmail(request.getEmail());
-
         if (adminOpt.isPresent()) {
             response.status = false;
             response.message = ADMIN_REGISTERED;
-        } else {
-            repository.save(request);
-            response.status = true;
-            response.message = ADMIN_SUCCESS;
-            response.id = request.getId();
+            return response;
         }
+
+        // 🔐 SEGURIDAD
+        request.setSecretKey(null);                 // ❌ NO guardar la clave
+        request.setPassword(encrypt(request.getPassword())); // 🔐 cifrar contraseña
+
+        repository.save(request);
+
+        response.status = true;
+        response.message = ADMIN_SUCCESS;
+        response.id = request.getId();
 
         return response;
     }
+
 
 
     public Admin update(Admin admin) {
