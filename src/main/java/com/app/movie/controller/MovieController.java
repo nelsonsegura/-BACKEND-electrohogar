@@ -49,11 +49,22 @@ public class MovieController {
         return response;
     }
 
-    @PutMapping("")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public Movie update(@RequestBody Movie request) {
-        return service.update(request);
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseDto> update(
+            @PathVariable String id,
+            @RequestBody Movie request
+    ) {
+        request.setId(id); // 🔴 MUY IMPORTANTE
+
+        ResponseDto response = service.update(request);
+
+        if (response.status) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
+
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

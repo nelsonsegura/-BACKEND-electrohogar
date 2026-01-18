@@ -20,8 +20,8 @@ import java.util.Optional;
 @Service
 public class MovieService {
 
-    private final String MOVIE_REGISTERED="La pelicula ya se encuentra registrada";
-    private final String MOVIE_SUCCESS="La pelicula se registró correctamente";
+    private final String MOVIE_REGISTERED="el producto ya se encuentra registrado";
+    private final String MOVIE_SUCCESS="el producto se registró correctamente";
 
     @Autowired
     MovieRepository repository;
@@ -51,16 +51,25 @@ public class MovieService {
         return response;
     }
 
-    public Movie update(Movie movie) {
-        Movie movieToUpdate = new Movie();
+    public ResponseDto update(Movie request) {
 
-        Optional<Movie> currentMovie = repository.findById(movie.getId());
-        if (!currentMovie.isEmpty()) {
-            movieToUpdate = movie;
-            movieToUpdate=repository.save(movieToUpdate);
+        ResponseDto response = new ResponseDto();
+
+        Optional<Movie> movieOpt = repository.findById(request.getId());
+
+        if (movieOpt.isEmpty()) {
+            response.status = false;
+            response.message = "Producto no encontrado";
+            return response;
         }
-        return movieToUpdate;
+
+        repository.save(request);
+        response.status = true;
+        response.message = "Producto actualizado correctamente";
+
+        return response;
     }
+
 
     public Boolean delete(String id) {
         repository.deleteById(id);
