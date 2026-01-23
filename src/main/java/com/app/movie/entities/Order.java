@@ -3,6 +3,8 @@ package com.app.movie.entities;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Document(collection = "orders")
 public class Order {
 
@@ -13,11 +15,19 @@ public class Order {
     private String clientName;
     private String email;
 
+    private String phone;
+    private String address;
+    private String paymentMethod;
+
     private Double total;
-    private String status;   // PENDIENTE, PAGADO, ENVIADO
-    private String date;     // YYYY-MM-DD
+    private String status;   // PENDING | APPROVED | REJECTED | SHIPPED
+    private String date;
+
+    // Productos comprados
+    private List<String> items;
 
     public Order() {}
+
 
     // GETTERS Y SETTERS
     public String getId() { return id; }
@@ -40,4 +50,18 @@ public class Order {
 
     public String getDate() { return date; }
     public void setDate(String date) { this.date = date; }
+
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
+    public String getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+
+    public List<String> getItems() { return items; }
+    public void setItems(List<String> items) { this.items = items; }
+
 }

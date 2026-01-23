@@ -1,5 +1,6 @@
 package com.app.movie.controller;
 
+import com.app.movie.dto.ResponseDto;
 import com.app.movie.entities.Order;
 import com.app.movie.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class OrderController {
     }
 
     @PostMapping("")
-    public Order create(@RequestBody Order order) {
+    public ResponseDto create(@RequestBody Order order) {
         return service.create(order);
     }
 
