@@ -12,20 +12,26 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
 
     @Autowired
-    OrderService service;
+    private OrderService service;
 
-    @GetMapping("")
-    public Iterable<Order> getAll() {
-        return service.getAll();
-    }
-
+    // ================= CLIENTE =================
     @PostMapping("")
     public ResponseDto create(@RequestBody Order order) {
         return service.create(order);
     }
 
+    // ================= ADMIN =================
+    @GetMapping("")
+    public Iterable<Order> getAll() {
+        return service.getAll();
+    }
+
     @PutMapping("/{id}/{status}")
-    public void updateStatus(@PathVariable String id, @PathVariable String status) {
-        service.updateStatus(id, status);
+    public ResponseDto updateStatus(
+            @PathVariable String id,
+            @PathVariable String status) {
+
+        return service.updateStatus(id, status);
     }
 }
+
