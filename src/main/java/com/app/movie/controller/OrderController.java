@@ -21,10 +21,12 @@ public class OrderController {
     }
 
     // ================= ADMIN =================
-    @GetMapping("")
-    public Iterable<Order> getAll() {
-        return service.getAll();
+    @GetMapping("/client/{id}")
+    public Iterable<Order> getByClient(@PathVariable String id){
+        return service.getByClient(id);
     }
+
+
 
     @PutMapping("/{id}/{status}")
     public ResponseDto updateStatus(

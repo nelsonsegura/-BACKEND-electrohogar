@@ -37,6 +37,18 @@ public class Movie implements Serializable {
     private String description;
     private List<Category> categories;
     private List<Staff> staffList;
-    
-    
+    private Double price;
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+
 }
+
+
+
