@@ -13,6 +13,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+
+import com.app.movie.entities.Category;
+import com.app.movie.interfaces.ICategoryRepository;
+
+
+
 /**
  *
  * @author Andres
@@ -25,6 +31,9 @@ public class MovieService {
 
     @Autowired
     MovieRepository repository;
+    @Autowired
+    ICategoryRepository categoryRepository;
+
 
     public Iterable<Movie> get() {
         Iterable<Movie> response = repository.getAll();
@@ -37,17 +46,43 @@ public class MovieService {
     }
 
     public ResponseDto create(Movie request) {
+
         ResponseDto response = new ResponseDto();
+
+        // Validar nombre duplicado
         List<Movie> movies = repository.getByName(request.getName());
-        if(movies.size()>0){
-            response.status=false;
-            response.message=MOVIE_REGISTERED;
-        }else{
-            repository.save(request);
-            response.status=true;
-            response.message=MOVIE_SUCCESS;
-            response.id= request.getId();
+        if(movies.size() > 0){
+            response.status = false;
+            response.message = MOVIE_REGISTERED;
+            return response;
         }
+
+        // Validar categoría
+        if(request.getCategory() == null || request.getCategory().getId() == null){
+            response.status = false;
+            response.message = "Debe seleccionar una categoría";
+            return response;
+        }
+
+        Category category = categoryRepository
+                .findById(request.getCategory().getId())
+                .orElse(null);
+
+        if(category == null){
+            response.status = false;
+            response.message = "Categoría no válida";
+            return response;
+        }
+
+        // Insertar categoría real
+        request.setCategory(category);
+
+        repository.save(request);
+
+        response.status = true;
+        response.message = MOVIE_SUCCESS;
+        response.id = request.getId();
+
         return response;
     }
 
@@ -63,12 +98,33 @@ public class MovieService {
             return response;
         }
 
+        // Validar categoría
+        if(request.getCategory() == null || request.getCategory().getId() == null){
+            response.status = false;
+            response.message = "Debe seleccionar una categoría";
+            return response;
+        }
+
+        Category category = categoryRepository
+                .findById(request.getCategory().getId())
+                .orElse(null);
+
+        if(category == null){
+            response.status = false;
+            response.message = "Categoría no válida";
+            return response;
+        }
+
+        request.setCategory(category);
+
         repository.save(request);
+
         response.status = true;
         response.message = "Producto actualizado correctamente";
 
         return response;
     }
+
 
 
     public Boolean delete(String id) {
