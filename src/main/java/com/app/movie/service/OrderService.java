@@ -80,4 +80,19 @@ public class OrderService {
         response.message = "Estado del pedido actualizado";
         return response;
     }
+    public ResponseDto delete(String id){
+        ResponseDto response = new ResponseDto();
+
+        if(!repository.existsById(id)){
+            response.status = false;
+            response.message = "Pedido no encontrado";
+            return response;
+        }
+
+        repository.deleteById(id);
+        response.status = true;
+        response.message = "Pedido eliminado correctamente";
+        return response;
+    }
+
 }

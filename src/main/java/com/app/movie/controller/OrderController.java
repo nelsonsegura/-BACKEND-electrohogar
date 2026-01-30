@@ -20,12 +20,16 @@ public class OrderController {
         return service.create(order);
     }
 
-    // ================= ADMIN =================
     @GetMapping("/client/{id}")
     public Iterable<Order> getByClient(@PathVariable String id){
         return service.getByClient(id);
     }
 
+    // ================= ADMIN =================
+    @GetMapping("")
+    public Iterable<Order> getAll(){
+        return service.getAll();
+    }
 
 
     @PutMapping("/{id}/{status}")
@@ -35,5 +39,11 @@ public class OrderController {
 
         return service.updateStatus(id, status);
     }
+    // ============ ADMIN ============
+    @DeleteMapping("/{id}")
+    public ResponseDto delete(@PathVariable String id){
+        return service.delete(id);
+    }
+
 }
 
