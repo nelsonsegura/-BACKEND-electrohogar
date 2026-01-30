@@ -27,6 +27,12 @@ public class AdminController {
         return service.get();
     }
 
+    @GetMapping("/{id}")
+    public Admin getById(@PathVariable String id) {
+        return service.getById(id).orElse(null);
+    }
+
+
     @GetMapping("/report")
     public ReportAdminDto getReport() {
         return service.getReport();

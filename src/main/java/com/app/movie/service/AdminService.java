@@ -38,6 +38,11 @@ public class AdminService {
 
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    public Optional<Admin> getById(String id) {
+        return repository.findById(id);
+    }
+
+
     public Iterable<Admin> get() {
         Iterable<Admin> response = repository.getAll();
         return response;
