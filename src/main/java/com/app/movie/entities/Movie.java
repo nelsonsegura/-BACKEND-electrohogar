@@ -25,5 +25,6 @@ public class Movie {
     private Double price;
 
     private Category category;   // 🔥 SOLO UNA
+    private Integer discount; // porcentaje de descuento (0 a 100)
 }
 

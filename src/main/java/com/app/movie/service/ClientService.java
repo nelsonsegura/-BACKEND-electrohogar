@@ -45,6 +45,11 @@ public class ClientService {
         return response;
     }
 
+    public Optional<Client> getById(String id) {
+        return repository.findById(id);
+    }
+
+
     public Optional<Client> getByCredential(String credential) {
         String pair = new String(Base64.decodeBase64(credential.substring(6)));
         String email = pair.split(":")[0];

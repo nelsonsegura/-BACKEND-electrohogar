@@ -33,6 +33,10 @@ public class ClientController {
 
     @Autowired
     ClientService service;
+    @GetMapping("/{id}")
+    public Client getById(@PathVariable String id) {
+        return service.getById(id).orElse(null);
+    }
 
     @GetMapping("")
     public Iterable<Client> get() {
